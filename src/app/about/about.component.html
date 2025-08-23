@@ -1,0 +1,134 @@
+<div class="container mt-4">
+  <h2>Liste des Factures</h2>
+  
+  <div class="mb-3">
+    <button class="btn btn-primary me-2" (click)="getAllFactures()">Toutes les factures</button>
+    <button class="btn btn-warning" (click)="loadNonPayees()">Factures non payées</button>
+     <button class="btn btn-primary me-2" for="ajout" (click)="openAjoutPopup()"> <i class="fas fa-user-plus"></i>Ajouter reclamation</button>
+  </div>
+
+  <div class="mb-3">
+    <label for="fournisseurSelect" class="form-label">Filtrer par fournisseur:</label>
+    <select id="fournisseurSelect" class="form-select" (change)="onFournisseurChange($event)">
+      <option value="">Tous les fournisseurs</option>
+      <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur._id.$oid">
+        {{ fournisseur.nom }}
+      </option>
+    </select>
+  </div>
+
+ <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Libellé</th>
+      <th>Débit</th>
+      <th>Crédit</th>
+      <th>Fournisseur</th>
+      <th>NOTE</th>
+      <th>Statut</th>
+            <th>Mode Paiement</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let facture of factures">
+      <td>{{ facture.data }}</td>  <!-- Pas de transformation de date pour l'instant -->
+      <td>{{ facture.libelle }}</td>
+      <td>{{ facture.debit | number:'1.2-2' }}</td>
+      <td>{{ facture.credit | number:'1.2-2' }}</td>
+     <td>{{ getFournisseurName(facture.Id_fournisseur) }}</td>
+     <td> {{facture.note}}</td>
+      <td>
+        <span class="badge" [ngClass]="{'bg-success': isPayee(facture), 'bg-danger': !isPayee(facture)}">
+          {{ isPayee(facture) ? 'Payée' : 'Non payée' }}
+        </span>
+      </td>
+      
+      <!-- Mode de paiement -->
+      <td>
+        <small>{{ getModePaiement(facture) }}</small>
+      </td>
+      <td>
+       
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- Paiement Modal -->
+<div class="modal fade" id="paiementModal" tabindex="-1" aria-labelledby="paiementModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paiementModalLabel">Paiement de la facture</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+       <!--label class="form-label">Montant: {{ selectedFacture?.debit | number:'1.2-2' }}</label> -->
+        </div>
+        <div class="mb-3">
+          <label for="modePaiement" class="form-label">Mode de paiement:</label>
+          <select id="modePaiement" class="form-select" [(ngModel)]="modePaiement">
+            <option value="VIREMENT">Virement</option>
+            <option value="CHEQUE">Chèque</option>
+            <option value="CAISSE">Caisse</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="notePaiement" class="form-label">Note:</label>
+          <textarea id="notePaiement" class="form-control" [(ngModel)]="notePaiement"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="confirmerPaiement()">Confirmer le paiement</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showAddPopup" class="custom-modal-overlay">
+  <div class="custom-modal-container">
+    <div class="custom-modal-header">
+      <h4>Ajouter une Facture</h4>
+      <button (click)="closePopup()" class="custom-close-btn">&times;</button>
+    </div>
+    <div class="custom-modal-body">
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateCreation">Date de Création</label>
+            <input type="date" [(ngModel)]="facture.DATA" name="dateCreation" id="dateCreation" required>
+          </div>
+          <div class="form-group">
+            <label for="nom">Libellé</label>
+            <input type="text" name="nom" id="nom" [(ngModel)]="facture.LIBELLE" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="debit">Débit</label>
+            <input type="number" name="debit" id="debit" [(ngModel)]="facture.debit" required>
+          </div>
+          <div class="form-group">
+            <label for="credit">Crédit</label>
+            <input type="number" name="credit" id="credit" [(ngModel)]="facture.credit" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="description">Note :</label>
+            <textarea id="description" [(ngModel)]="facture.NOTE" name="note" required rows="1"></textarea>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="ajout" (click)="onSubmit()">Ajouter</button>
+          <button type="button" class="ferme" (click)="closePopup()">Fermer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
