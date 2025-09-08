@@ -1,21 +1,114 @@
+
+<div class="container mt-4">
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading" class="text-center mb-3">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Chargement des soldes...</p>
+  </div>
+
+  <!-- Composant Solde -->
+  <div class="solde-container" *ngIf="!isLoading">
+    <div class="solde-card">
+      <div class="solde-header">
+        <h3><i class="fas fa-wallet me-2"></i>SOLDE UBCI COMPTE DT</h3>
+        <span class="solde-date">{{ today | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="solde-amount" [class.text-muted]="soldeDT === 0">
+        {{ soldeDT !== undefined ? (soldeDT | number:'1.2-2') : 'N/A' }} DT
+      </div>
+    </div>
+
+    <div class="solde-card">
+      <div class="solde-header">
+        <h3><i class="fas fa-wallet me-2"></i>SOLDE UBCI COMPTE EURO</h3>
+        <span class="solde-date">{{ today | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="solde-amount" [class.text-muted]="soldeEURO === 0">
+        {{ soldeEURO !== undefined ? (soldeEURO | number:'1.2-2') : 'N/A' }} EURO
+      </div>
+    </div>
+  </div>
+
+  <!-- Bouton de rafraîchissement -->
+  <div class="text-center mt-3">
+    <button class="btn btn-primary" (click)="getSoldes()" [disabled]="isLoading">
+      <i class="fas fa-sync-alt me-2" [class.fa-spin]="isLoading"></i>
+      Actualiser les soldes
+    </button><!-- Bouton d’ouverture -->
+<button class="btn btn-primary" (click)="openUpdatePopup(paiement)">
+  <i class="fa fa-pencil" aria-hidden="true"></i> Modifier les soldes
+</button>
+
+<!-- Popup affiché uniquement si showupdatePopup = true -->
+<div *ngIf="showupdatePopup" class="modal">
+  <div class="modal-content">
+    <div class="custom-modal-header">
+      <h2 style="color: #FFA726;"> Mise à jour des soldes</h2>
+      <button (click)="closeUpdatePopup()" class="custom-close-btn">&times;</button>
+    </div>
+
+        <div class="custom-modal-body">
+          <form (ngSubmit)="updateSoldes()">
+    <div class="form-group">
+      <label for="updateDT">Solde DT</label>
+      <input type="number" step="0.01" class="form-control"
+             id="updateDT" [(ngModel)]="soldeDT" name="soldeDT">
+    </div>
+
+    <div class="form-group">
+      <label for="updateEURO">Solde EURO</label>
+      <input type="number" step="0.01" class="form-control"
+             id="updateEURO"  [(ngModel)]="soldeEURO" name="soldeEURO">
+    </div>
+    
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="closeUpdatePopup()">Annuler</button>
+      <button class="btn btn-primary" (click)="updateSoldes()">Mettre à jour</button>
+    </div>
+  </form>
+        </div>
+  </div>
+</div>
+
+      <!-- <div class="solde-details">
+        <div class="solde-item">
+          <span class="solde-label">FABBIZOCNIO JUILLET/2025</span>
+          <span class="solde-value">{{ soldeJuillet | number:'1.2-2' }} DT</span>
+        </div>
+        <div class="solde-item">
+          <span class="solde-label">FABBIZOCNIO AOUT/2025</span>
+          <span class="solde-value">{{ soldeAout | number:'1.2-2' }} DT</span>
+          </div>
+        </div>
+         <div class="solde-details">
+        <div class="solde-item">
+         <span class="solde-label">FABBIZOCNIO JUILLET/2025</span>
+          <span class="solde-value">{{ soldeJuillet | number:'1.2-2' }} EURO</span>
+        </div>
+          <div class="solde-item">
+          <span class="solde-label">FABBIZOCNIO AOUT/2025</span>
+          <span class="solde-value">{{ soldeAout | number:'1.2-2' }} EURO</span>
+       </div>
+        </div>
+      </div>-->
+    
 <div class="container mt-4">
   <h2>Liste des Factures</h2>
   
   <div class="mb-3">
     <button class="btn btn-primary me-2" (click)="getAllFactures()">Toutes les factures</button>
     <button class="btn btn-warning" (click)="loadNonPayees()">Factures non payées</button>
-     <button class="btn btn-primary me-2" for="ajout" (click)="openAjoutPopup()"> <i class="fas fa-user-plus"></i>Ajouter reclamation</button>
+    <button class="btn btn-warning" (click)="LoadPayees()">Factures payées</button> 
+    <button class="btn btn-primary me-2" for="ajout" (click)="openAjoutPopup()"> <i class="fas fa-user-plus"></i>Ajouter facture</button>
+     <button class="btn btn-warning"(click)="exportToExcel()">Exporter en Excel</button>
+         <button class="btn btn-primary me-2" for="ajout" (click)="openAjouterfournisseurPopup()"> <i class="fas fa-user-plus"></i>Ajouter fournisseur</button>
+
   </div>
 
-  <div class="mb-3">
-    <label for="fournisseurSelect" class="form-label">Filtrer par fournisseur:</label>
-    <select id="fournisseurSelect" class="form-select" (change)="onFournisseurChange($event)">
-      <option value="">Tous les fournisseurs</option>
-      <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur._id.$oid">
-        {{ fournisseur.nom }}
-      </option>
-    </select>
-  </div>
+  
 
  <table class="table table-striped">
   <thead>
@@ -26,8 +119,6 @@
       <th>Crédit</th>
       <th>Fournisseur</th>
       <th>NOTE</th>
-      <th>Statut</th>
-            <th>Mode Paiement</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -37,63 +128,67 @@
       <td>{{ facture.libelle }}</td>
       <td>{{ facture.debit | number:'1.2-2' }}</td>
       <td>{{ facture.credit | number:'1.2-2' }}</td>
-     <td>{{ getFournisseurName(facture.Id_fournisseur) }}</td>
+      <td>{{ fournisseurNames[facture.Id_fournisseur || facture.id_fournisseur || facture.fournisseurId || facture.idFournisseur || facture.ID_FOURNISSEUR] || 'N/A' }}</td>
+
      <td> {{facture.note}}</td>
-      <td>
-        <span class="badge" [ngClass]="{'bg-success': isPayee(facture), 'bg-danger': !isPayee(facture)}">
-          {{ isPayee(facture) ? 'Payée' : 'Non payée' }}
-        </span>
-      </td>
       
-      <!-- Mode de paiement -->
-      <td>
-        <small>{{ getModePaiement(facture) }}</small>
-      </td>
-      <td>
-       
-      </td>
+      
+    <td class="actions-cell">
+    <button class="btn btn-warning btn-sm" title="Modifier" (click)="openEditPopup(facture)">
+      <i class="fa fa-pencil" aria-hidden="true"></i>
+    </button>
+    <button class="btn btn-danger btn-sm" title="Supprimer" (click)="setDelete(facture)">
+      <i class="fa-solid fa-trash"></i>
+    </button>
+    <button class="btn btn-danger btn-sm payer-btn" (click)="openPaiementModal(facture)">
+      <i class="fa fa-credit-card" aria-hidden="true"></i> 
+    </button>
+  </td>
+
     </tr>
   </tbody>
 </table>
 </div>
 
 <!-- Paiement Modal -->
-<div class="modal fade" id="paiementModal" tabindex="-1" aria-labelledby="paiementModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="paiementModalLabel">Paiement de la facture</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-       <!--label class="form-label">Montant: {{ selectedFacture?.debit | number:'1.2-2' }}</label> -->
+<!-- Popup -->
+<div class="modal" *ngIf="showPaiementModal">
+  <div class="modal-content">
+    <div class="custom-modal-header">
+      <h4>Payer la facture</h4>
+      <button (click)="closePopup()" class="custom-close-btn">&times;</button>
+    </div>
+    <div class="custom-modal-body">
+      <form (ngSubmit)="confirmPaiement()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Devise</label>
+            <select [(ngModel)]="selectedDevise" name="devise" class="form-control">
+              <option value="DT">DT (Dinar Tunisien)</option>
+              <option value="EURO">EURO</option>
+            </select>
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="modePaiement" class="form-label">Mode de paiement:</label>
-          <select id="modePaiement" class="form-select" [(ngModel)]="modePaiement">
-            <option value="VIREMENT">Virement</option>
-            <option value="CHEQUE">Chèque</option>
-            <option value="CAISSE">Caisse</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Note de paiement</label>
+            <textarea [(ngModel)]="notePaiement" name="notePaiement" class="form-control"></textarea>
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="notePaiement" class="form-label">Note:</label>
-          <textarea id="notePaiement" class="form-control" [(ngModel)]="notePaiement"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-primary" (click)="confirmerPaiement()">Confirmer le paiement</button>
-      </div>
+        <button type="submit" class="btn btn-primary">Confirmer</button>
+        <button type="button" class="btn btn-secondary" (click)="closePopup()">Annuler</button>
+      </form>
     </div>
   </div>
 </div>
 
-<div *ngIf="showAddPopup" class="custom-modal-overlay">
+
+
+<!--Modifi popup-->
+<div *ngIf="showEditPopup" class="custom-modal-overlay">
   <div class="custom-modal-container">
     <div class="custom-modal-header">
-      <h4>Ajouter une Facture</h4>
+      <h4>Modifier la Facture</h4>
       <button (click)="closePopup()" class="custom-close-btn">&times;</button>
     </div>
     <div class="custom-modal-body">
@@ -105,7 +200,56 @@
           </div>
           <div class="form-group">
             <label for="nom">Libellé</label>
-            <input type="text" name="nom" id="nom" [(ngModel)]="facture.LIBELLE" required>
+            <input type="text" name="nom" id="nom" [(ngModel)]="facture.LIBELLE" required>  
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group
+">
+            <label for="debit">Débit</label>
+            <input type="number" name="debit" id="debit" [(ngModel)]="facture.debit" required>  
+          </div>
+          <div class="form-group">
+            <label for="credit">Crédit</label>
+            <input type="number" name="credit" id="credit" [(ngModel)]="facture.credit" required> 
+          </div>
+        </div>
+        <div class="form-row">
+           <div class="form-group">
+            <label for="fournisseur">Fournisseur</label>
+            <input type="text" name="fournisseur"id="credit" [(ngModel)]="facture.Id_fournisseur" required>
+          </div>
+          <div class="form-group">
+            <label for="description">Note :</label>
+            <textarea id="description" [(ngModel)]="facture.NOTE" name="note" required rows="1"></textarea> 
+            </div>
+        </div>
+             <div class="modal-footer">
+          <button type="button" class="ajout" (click)="closePopup()">Annuler</button>
+          <button type="button" class="ferme" (click)="UpdateRecords()">Mettre à jour</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Ajout Popup -->
+<div *ngIf="showAddPopup" class="custom-modal-overlay">
+  <div class="custom-modal-container">
+    <div class="custom-modal-header">
+      <h4>Ajouter une Facture</h4>
+      <button (click)="closePopup()" class="custom-close-btn">&times;</button>
+    </div>
+    <div class="custom-modal-body">
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="data">Date de Création</label>
+            <input type="date" [(ngModel)]="facture.DATA" name="data" id="DATA" required>
+          </div>
+          <div class="form-group">
+            <label for="LIBELLE">Libellé</label>
+            <input type="text" name="LIBELLE" id="LIBELLE" [(ngModel)]="facture.LIBELLE" required>
           </div>
         </div>
         <div class="form-row">
@@ -119,15 +263,48 @@
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group full-width">
-            <label for="description">Note :</label>
-            <textarea id="description" [(ngModel)]="facture.NOTE" name="note" required rows="1"></textarea>
+          <div class="form-group">
+            <label for="fournisseurNom" aria-placeholder="SElectionner un Fournisseur">Fournisseur</label>
+           <select [(ngModel)]="facture.fournisseurNom" name="fournisseurNom" required>Sélectionnez un fournisseur
+  <option value="" disabled selected>Sélectionnez un fournisseur</option>
+  <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.nom">
+    {{ fournisseur.nom }}
+  </option>
+</select></div>
+          <div class="form-group">
+            <label for="note">Note :</label>
+            <textarea id="note" [(ngModel)]="facture.NOTE" name="note" required rows="1"></textarea>
           </div>
         </div>
         <div class="custom-modal-footer">
           <button type="button" class="ajout" (click)="onSubmit()">Ajouter</button>
-          <button type="button" class="ferme" (click)="closePopup()">Fermer</button>
+         </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showAddFournisseurPopup" class="custom-modal-overlay">
+  <div class="custom-modal-container">
+    <div class="custom-modal-header">
+      <h4>Ajouter un Fournisseur</h4>
+      <button (click)="closePopup()" class="custom-close-btn">&times;</button>
+    </div>
+    <div class="custom-modal-body">
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nom">Nom du Fournisseur</label>
+            <input type="text" name="nom" id="nom" [(ngModel)]="fournisseur.nom" required>    
+          </div>
+          <div class="form-group">
+            <label for="Service">Service</label>
+            <input type="text" name="Service" id="Service" [(ngModel)]="fournisseur.Service" required>
+          </div>
         </div>
+         <div class="custom-modal-footer">
+          <button type="button" class="ajout" (click)="Register()">Ajouter</button>
+         </div>
       </form>
     </div>
   </div>

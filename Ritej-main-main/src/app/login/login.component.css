@@ -1,0 +1,204 @@
+/* Reset et police */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Conteneur principal */
+.login-container {
+  display: flex;
+  height: 100vh;
+  background-color: #231F20;
+}
+
+/* Section de bienvenue (noire) */
+.welcome-section {
+  flex: 2;
+  background-color: #231F20;
+  color: #FFA726;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.welcome-section img {
+  max-width: 20%;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.welcome-section h1 {
+  font-size: 2.5em;
+  margin-bottom: 1rem;
+  color: #FFA726;
+}
+
+.welcome-section p {
+  font-size: 1.2rem;
+  color: white;
+}
+
+/* Section de connexion (blanche avec bordure jaune) */
+.login-section {
+  flex: 1;
+  background-color: white;
+  padding: 2rem;
+  border-left: 1px solid #FFA726;
+}
+
+
+
+.login-section h2 {
+  margin-bottom: 2rem;
+  color: #231F20;
+  font-size: 1.5rem;
+  text-align: left;
+  padding-bottom: 0.5rem;
+}
+
+.login-section form {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.login-section label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #231F20;
+  text-align: left;
+}
+
+.login-section input {
+  margin-bottom: 1.2rem;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 1rem;
+}
+
+.login-section input:focus {
+  outline: none;
+  border-color: #FFA726;
+  box-shadow: 0 0 0 1px #FFA726;
+}
+
+.login-section input::placeholder {
+  color: #999;
+}
+
+/* Conteneur du mot de passe */
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+#pwd {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  padding-right: 30px;
+  background-color: white;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 36%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #FFA726;
+}
+
+/* Bouton de connexion (noir) */
+.btn {
+  margin-top: 1.5rem;
+  width: 65%;
+  align-self: center;
+}
+
+button.cnx {
+  width: 100%;
+  padding: 12px;
+  background-color: #231F20;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button.cnx:hover {
+  background-color: #4A4A4A;
+}
+
+/* Lien "Mot de passe oublié" */
+.forget {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.connexion-link {
+  color: #231F20;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.connexion-link:hover {
+  color: #FFA726;
+  text-decoration: underline;
+}
+
+.connexion-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: #FFA726;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.connexion-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .welcome-section {
+    padding: 1.5rem;
+  }
+
+  .welcome-section h1 {
+    font-size: 2rem;
+  }
+
+  .login-section {
+    border-left: none;
+    border-top: 1px solid #FFA726;
+    padding: 1.5rem;
+  }
+
+  .login-section::after {
+    top: 1rem;
+  }
+}

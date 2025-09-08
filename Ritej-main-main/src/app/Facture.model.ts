@@ -1,12 +1,11 @@
 export interface Facture {
-  Date: string;
-  _id: { $oid: string };
+_id: { $oid: string };
   DATA: string;
   LIBELLE: string;
   debit: number;
-  credit: number | null;
-  NOTE: string | null;
+  credit: number ;
+  NOTE: string ;
   Id_fournisseur: string;
-  modeDePayement: string;
   payee?: boolean;
+   fournisseurNom?: string;
 }
