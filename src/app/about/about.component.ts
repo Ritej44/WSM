@@ -103,7 +103,7 @@ openPaiementModal(facture: any) {
   this.showPaiementModal = true;
 }
 confirmPaiement() {
-  const url = `http://localhost:8080/api/factures/${this.currentFactureID}/payer`;
+  const url = `https://springboot-production-6575.up.railway.app/api/factures/${this.currentFactureID}/payer`;
   const body = {
     notePaiement: this.notePaiement,
     devise: this.selectedDevise
@@ -134,7 +134,7 @@ confirmPaiement() {
 }
 
 getAllFournisseurs() {
-  this.http.get<Fournisseur[]>('http://localhost:8080/api/fournisseurs')
+  this.http.get<Fournisseur[]>('https://springboot-production-6575.up.railway.app/api/fournisseurs')
     .subscribe(fournisseurs => {
       this.fournisseurs = fournisseurs;
       console.log('Fournisseurs chargés :', this.fournisseurs); // Debug
@@ -143,7 +143,7 @@ getAllFournisseurs() {
 
 getSoldes(): void {
   this.isLoading = true;
-  this.http.get<any>('http://localhost:8080/api/paiement/getAll')
+  this.http.get<any>('https://springboot-production-6575.up.railway.app/api/paiement/getAll')
     .subscribe(
       (response) => {
         console.log("Soldes récupérés :", response);
@@ -182,7 +182,7 @@ isLoading: boolean = false;
   getAllFactures() {
   console.log("Début de la récupération des factures");
 
-  this.http.get("http://localhost:8080/api/factures/getAll")
+  this.http.get("https://springboot-production-6575.up.railway.app/api/factures/getAll")
     .subscribe((resultData: any) => {
       console.log("Factures reçues:", resultData);
 
@@ -204,7 +204,7 @@ isLoading: boolean = false;
         console.log(`Requête pour fournisseur ID: ${fournisseurId}`);
         
         // Utiliser responseType: 'json' et extraire le nom
-        return this.http.get<any>(`http://localhost:8080/api/fournisseurs/nom/${fournisseurId}`)
+        return this.http.get<any>(`https://springboot-production-6575.up.railway.app/api/fournisseurs/nom/${fournisseurId}`)
           .pipe(
             map(response => response.nom), // Extraire seulement le nom
             catchError(error => {
@@ -236,7 +236,7 @@ exportToExcel() {
     'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   });
 
-  this.http.get('http://localhost:8080/api/factures/export/excel', {
+  this.http.get('https://springboot-production-6575.up.railway.app/api/factures/export/excel', {
     headers: headers,
     responseType: 'blob',
     observe: 'response'
@@ -312,7 +312,7 @@ exportToExcel() {
     idFournisseur: fournisseurId,
    };
 
-  this.http.post("http://localhost:8080/api/factures/create", factureData)
+  this.http.post("https://springboot-production-6575.up.railway.app/api/factures/create", factureData)
     .subscribe(
       (resultData: any) => {
         console.log(resultData);
@@ -348,7 +348,7 @@ Register() {
 
   console.log('Données mappées envoyées:', dataToSend);
   
-  this.http.post("http://localhost:8080/api/fournisseurs/create", dataToSend, { 
+  this.http.post("https://springboot-production-6575.up.railway.app/api/fournisseurs/create", dataToSend, { 
     responseType: 'text' 
   })
   .subscribe(
@@ -365,7 +365,7 @@ Register() {
   );
 }
 getFournisseurName(id: string): void {
-    this.http.get(`http://localhost:8080/api/fournisseurs/nom/${id}`, { responseType: 'text' })
+    this.http.get(`https://springboot-production-6575.up.railway.app/api/fournisseurs/nom/${id}`, { responseType: 'text' })
       .subscribe((resultData: string) => {
         this.fournisseurNames[id] = resultData;
       });
@@ -443,7 +443,7 @@ private extractFactureId(facture: any): string | null {
 
 setDelete(data: any) { 
     if (confirm('Êtes-vous sûr de vouloir supprimer cette facture ?')) { 
-    this.http.delete(`http://localhost:8080/api/factures/${data.id}`, 
+    this.http.delete(`https://springboot-production-6575.up.railway.app/api/factures/${data.id}`, 
       { responseType: 'text' }).subscribe((resultData: any) => {
         console.log(resultData);
         this.toastr.warning("Facture supprimée avec succès");
@@ -510,7 +510,7 @@ UpdateRecords() {
 
   console.log('Données envoyées au serveur:', bodyData);
 
-  this.http.put(`http://localhost:8080/api/factures/update/${this.currentFactureID}`, bodyData)
+  this.http.put(`https://springboot-production-6575.up.railway.app/api/factures/update/${this.currentFactureID}`, bodyData)
     .subscribe({
       next: (resultData: any) => {
         this.toastr.success('Facture mise à jour avec succès');

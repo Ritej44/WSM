@@ -22,7 +22,7 @@ export class LoginComponent {
 
   constructor(private router: Router,private http: HttpClient,private toastr:ToastrService ) {
   }
- private url: string = "http://localhost:8080/api/user/login";
+ private url: string = "https://springboot-production-6575.up.railway.app/api/user/login";
   emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   validateEmail() {
@@ -62,7 +62,7 @@ export class LoginComponent {
 
   };
 
-  this.http.post<any>("http://localhost:8080/api/user/login", bodyData).subscribe(
+  this.http.post<any>("https://springboot-production-6575.up.railway.app/api/user/login", bodyData).subscribe(
 
     (resultData) => {
       console.log(resultData);
